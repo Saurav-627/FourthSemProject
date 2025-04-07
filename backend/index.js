@@ -4,7 +4,6 @@ const authRoute = require("./routes/auth");
 const app = express();
 const managerRoute = require("./routes/manager");
 const adminRoute = require("./routes/admin");
-const Discussion = require("./model/Discussion");
 const PDFDocument = require("pdfkit");
 const History = require("./model/History");
 const User = require("./model/User");
@@ -17,51 +16,10 @@ const io = require("socket.io")(server, {
   },
 });
 
-const backendId = 6969;
-
-io.on("connection", (socket) => {
-  console.log("a user connected");
-
-  socket.on("join-notification", (room) => {
-    socket.join(room);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
-  socket.on("join-discussion", (room) => {
-    console.log("joined", room);
-    socket.join(room);
-  });
-
-  socket.on("leave-discussion", (room) => {
-    socket.leave(room);
-  });
-
-  socket.on("comment", async (msg, room) => {
-    const { _id, comment, phone, user_name } = msg;
-    const discussion = await Discussion.findOne({ _id: _id });
-    discussion.replies.push({ comment, phone, user_name });
-    await discussion.save();
-
-    // if (discussion.phone === phone) {
-    //   return;
-    // }
-
-    const notice = new Notice({
-      user_name: user_name,
-      message: "Commented on your discussion",
-      discussion_id: discussion.phone,
-    });
-    await notice.save();
-    io.to(room).emit("new-comment", msg);
-    io.to(backendId + discussion.phone).emit("forum-notification", msg);
-  });
-});
+// const backendId = 6969;
 
 const cors = require("cors");
 const { connect } = require("mongoose");
-const Notice = require("./model/Notice");
 const Admin = require("./model/Admin");
 app.use(json());
 app.use(cors());

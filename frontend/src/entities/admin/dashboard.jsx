@@ -1,6 +1,5 @@
 import { Stat, StatLabel, StatNumber, Flex } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import UserCreationGraph from "./components/Chart";
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState([]);
@@ -72,20 +71,7 @@ const AdminDashboard = () => {
           <StatLabel fontSize={"18px"}>Total Hospital</StatLabel>
           <StatNumber>{stats.managerCount}</StatNumber>
         </Stat>
-
-        <Stat
-          bg={"white"}
-          p={5}
-          w={"700px"}
-          display={"flex"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          <StatLabel fontSize={"18px"}>Total Forums</StatLabel>
-          <StatNumber>{stats.forumCount}</StatNumber>
-        </Stat>
       </Flex>
-      {/* <UserCreationGraph forums={stats.forumsData ? stats.forumsData : []} /> */}
     </Flex>
   );
 };

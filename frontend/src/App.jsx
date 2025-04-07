@@ -3,15 +3,11 @@ import OtpPage from "./entities/user/components/OtpPage";
 import { useRoutes, Navigate } from "react-router-dom";
 import AuthRoute from "./routes/AuthRoute";
 import Navbar from "./entities/user/components/Navbar";
-import About from "./entities/user/About";
 import Home from "./entities/user/Home";
 import FindHospital from "./entities/user/FindHospital";
-import Contact from "./entities/user/Contact";
-import GeneralQuery from "./entities/user/GeneralQuery";
 import Speciality from "./entities/user/Speciality";
 import Profile from "./entities/user/Profile";
 import NotFound from "./entities/user/NotFound";
-import Testimonial from "./entities/user/Testimonial";
 import Sidebar from "./entities/manager/components/Sidebar";
 
 import ManageDoctor from "./entities/manager/ManageDoctor";
@@ -106,24 +102,8 @@ function App() {
           element: <Home />,
         },
         {
-          path: "/about",
-          element: <About />,
-        },
-        {
-          path: "/testimonial",
-          element: <Testimonial />,
-        },
-        {
           path: "/find",
           element: <FindHospital />,
-        },
-        {
-          path: "/usercontact",
-          element: <Contact />,
-        },
-        {
-          path: "/query",
-          element: <GeneralQuery />,
         },
         {
           path: "/hospital/:id",

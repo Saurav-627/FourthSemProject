@@ -4,7 +4,6 @@ const { ObjectId } = require("mongodb");
 const Doctor = require("../model/Doctor");
 require("dotenv").config();
 const nodemailer = require("nodemailer");
-const MailOtp = require("../model/MailOtp");
 const { Manager } = require("socket.io-client");
 const hospital = require("../model/Hospital");
 const History = require("../model/History");
@@ -324,80 +323,6 @@ router.delete("/deleteHospitalSpeciality/:id", async (req, res) => {
   }
 });
 
-// router.post("/sendOTP", async (req, res) => {
-//   const { email } = req.body;
-//   if (!email) {
-//     return res.status(400).json({ message: "Please enter your phone number" });
-//   }
-//   const otp = Math.floor(1000 + Math.random() * 9000);
-//   const message = `Your OTP is ${otp}`;
-//   console.log(message);
-//   try {
-//     const transporter = nodemailer.createTransport({
-//       service: "gmail",
-//       auth: {
-//         user: process.env.APP_EMAIL,
-//         pass: process.env.APP_KEY,
-//       },
-//     });
-//     const info = await transporter.sendMail({
-//       from: "Hospital Management System",
-//       to: email,
-//       subject: "OTP",
-//       text: message,
-//     });
-
-//     const mail = new MailOtp({
-//       email: email,
-//       otp: otp,
-//       expireAt: Date.now() + 300000,
-//     });
-//     await mail.save();
-
-//     res.status(200).json({ otp: otp });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
-
-// router.post("/login", async (req, res) => {
-//   const { email, password, otp } = req.body;
-//   console.log(req.body);
-//   if (!email || !password || !otp) {
-//     return res.status(400).json({ message: "Please fill all the fields" });
-//   }
-//   try {
-//     const hospital = await Hospital.findOne({
-//       email: email,
-//       password: password,
-//     });
-
-//     if (!hospital) {
-//       return res.status(400).json({ message: "Invalid Credentials" });
-//     }
-
-//     const otp = await MailOtp.findOne({
-//       email: email,
-//     });
-
-//     if (!otp) {
-//       return res.status(400).json({ message: "Invalid OTP" });
-//     }
-
-//     // if (otp.expireAt < Date.now()) {
-//     //   return res.status(400).json({ message: "OTP Expired" });
-//     // }
-
-//     return res
-//       .status(200)
-//       .json({ message: "Login Successful", hospital: hospital });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
-
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   console.log(req.body);
@@ -413,19 +338,6 @@ router.post("/login", async (req, res) => {
     if (!hospital) {
       return res.status(400).json({ message: "Invalid Credentials" });
     }
-
-    // const otp = await MailOtp.findOne({
-    //   email: email,
-    // });
-
-    // if (!otp) {
-    //   return res.status(400).json({ message: "Invalid OTP" });
-    // }
-
-    // if (otp.expireAt < Date.now()) {
-    //   return res.status(400).json({ message: "OTP Expired" });
-    // }
-
     return res
       .status(200)
       .json({ message: "Login Successful", hospital: hospital });

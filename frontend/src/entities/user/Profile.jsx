@@ -95,7 +95,7 @@ export default function UserProfileEdit(props) {
           name: userData.name,
           emergencyContact: userData.emergencyContact,
           blood: userData.blood,
-          image: data ? data : userData.profile,
+          image: data ? data : userData?.profile,
           address: userData.address,
         }),
       });

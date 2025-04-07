@@ -30,80 +30,26 @@ import {
 } from "@chakra-ui/icons";
 import { Outlet, useNavigate, Link as ToLink } from "react-router-dom";
 import { useEffect, useState } from "react";
-// import Footer from "./Footer";
 import { FiBell } from "react-icons/fi";
 import io from "socket.io-client";
 import { useToast } from "@chakra-ui/react";
 
-// const socket = io("http://localhost:3002");
 const roomId = 6969 + localStorage.getItem("phone");
-// socket.emit("join-notification", roomId);
 
 export default function Navbar(props) {
   const { isOpen, onToggle } = useDisclosure();
-  const [notice, setNotice] = useState([]);
   const phone = localStorage.getItem("phone");
   const navigate = useNavigate();
   const [userData, setUserData] = useState({});
   const toast = useToast();
 
   const [notifications, setNotifications] = useState([]);
-
-  // const fetchNotice = async () => {
-  //   // console.log(phone);
-  //   const response = await fetch(
-  //     `http://localhost:3000/api/user/getNotice/${phone}`
-  //   );
-  //   const data = await response.json();
-  //   // console.log(data.notices);
-  //   setNotifications(data.notices ? data.notices : []);
-  // };
-
-  // useEffect(() => {
-  //   socket.on("forum-notification", (data) => {
-  //     toast({
-  //       title: "New Comment in Forum",
-  //       description: "Someone posted in your forum",
-  //       status: "success",
-  //       duration: 3000,
-  //       isClosable: true,
-  //       position: "top-left",
-  //     });
-
-  //     setNotifications((prevNotifications) => {
-  //       // Remove the last notification
-  //       let updatedNotifications;
-  //       if (prevNotifications.length === 5) {
-  //         updatedNotifications = prevNotifications.slice(0, -1);
-  //       } else {
-  //         updatedNotifications = prevNotifications;
-  //       }
-  //       // Add the new notification
-  //       // console.log(data);
-  //       const newNotification = {
-  //         user_name: data.user_name,
-  //         message: data.message,
-  //         _id: data._id,
-  //       };
-  //       const reversed = [newNotification, ...updatedNotifications];
-  //       return reversed;
-  //     });
-  //   });
-  // }, []);
-
-  // useEffect(() => {
-  //   if (phone) {
-  //     fetchNotice();
-  //   }
-  // }, [phone]);
-
   const fetchUser = async (phoneNumber) => {
     try {
       const response = await fetch(
         `http://localhost:3000/api/user/data/${phoneNumber}`
       );
       const data = await response.json();
-      // console.log(data.user);
       setUserData(data.user);
       localStorage.setItem("user", JSON.stringify(data.user));
     } catch (err) {
@@ -112,7 +58,6 @@ export default function Navbar(props) {
   };
 
   useEffect(() => {
-    // console.log(phone);
     if (phone) {
       fetchUser(phone);
     }
@@ -171,7 +116,6 @@ export default function Navbar(props) {
             direction={"row"}
             alignItems={"center"}
           >
-
             {/* <Menu>
               {phone !== null ? (
                 <Flex as={MenuButton}>
@@ -279,8 +223,6 @@ export default function Navbar(props) {
         </Collapse> */}
       </Box>
       <Outlet />
-      
-      {/* <Footer /> */}
     </>
   );
 }
@@ -444,29 +386,9 @@ const NAV_ITEMS = [
   {
     label: "Home",
     href: "/",
-    // children: [
-    //   {
-    //     label: "Explore Design Work",
-    //     subLabel: "Trending Design to inspire you",
-    //     href: "#",
-    //   },
-    //   {
-    //     label: "New & Noteworthy",
-    //     subLabel: "Up-and-coming Designers",
-    //     href: "#",
-    //   },
-    // ],
   },
-  // {
-  //   label: "Explore ",
-  //   href: "/about",
-  // },
   {
     label: "Find Hospital",
     href: "/find",
   },
-  // {
-  //   label: "Discussion Forum",
-  //   href: "/query",
-  // },
 ];

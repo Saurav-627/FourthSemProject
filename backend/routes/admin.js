@@ -3,7 +3,6 @@ const Admin = require("../model/Admin");
 const Hospital = require("../model/Hospital");
 const Doctor = require("../model/Doctor");
 const User = require("../model/User");
-const Discussion = require("../model/Discussion");
 
 router.post("/registerHospital", async (req, res) => {
   const { name, phone, address, email, password, image, city } =
@@ -97,16 +96,12 @@ router.get("/allStats", async (req, res) => {
     const countDoctor = (await Doctor.find()).length;
     const countUser = (await User.find()).length;
     const managerCount = (await Hospital.find()).length;
-    const forums = await Discussion.find();
-    const forumCount = forums.length;
     return res.status(200).send({
       message: "Success",
       data: {
         doctorCount: countDoctor,
         userCount: countUser,
         managerCount: managerCount,
-        forumCount: forumCount,
-        forumsData: forums,
       },
     });
   } catch (err) {
