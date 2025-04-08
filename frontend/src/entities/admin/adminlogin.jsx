@@ -21,6 +21,7 @@ import {
   useDisclosure,
   Center,
   Divider,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
@@ -32,6 +33,7 @@ export default function AdminLogin() {
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const toast = useToast();
 
   const login = async (e) => {
     e.preventDefault();
@@ -46,13 +48,25 @@ export default function AdminLogin() {
           body: JSON.stringify({ username, password }),
         }
       );
+
       if (response.status === 200) {
         const data = await response.json();
         localStorage.setItem("admin", username);
+
         navigate("/admin");
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData?.msg || "Login failed");
       }
     } catch (err) {
       console.log(err);
+      toast({
+        title: "Log in Failed.",
+        description: err?.message || "failed to login",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 

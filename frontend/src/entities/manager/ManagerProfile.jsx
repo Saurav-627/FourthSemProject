@@ -234,7 +234,7 @@ const ManagerProfile = (props) => {
           <Input
             placeholder="Address"
             _placeholder={{ color: "gray.500" }}
-            type="text"
+            type="email"
             defaultValue={managerData.email}
             onChange={(e) => {
               setManagerData({ ...managerData, email: e.target.value });

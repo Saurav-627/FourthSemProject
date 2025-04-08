@@ -218,6 +218,7 @@ router.patch("/updateDoctor/:id", async (req, res) => {
       qualification: req.body.qualification,
       hospital: req.body.hospital,
       image: req.body.image,
+      fees: req.body.fees,
     });
 
     console.log(doctor);

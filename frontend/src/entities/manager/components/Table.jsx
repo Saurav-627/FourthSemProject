@@ -207,55 +207,75 @@ const TableDoctor = () => {
   };
 
   const addDoctor = async () => {
-    const formData = new FormData();
-    formData.append("file", image);
-    formData.append("upload_preset", "lef6u6wv");
-    const requestConfig = {
-      url: `https://api.cloudinary.com/v1_1/ddrleopwg/image/upload`,
-      method: "POST",
-      body: formData,
-    };
-    const data = await uploadImage(requestConfig, formData);
-    const doctor = {
-      hospital: id,
-      name: `Dr. ${fullNames}`,
-      phone: phone,
-      nmc: nmc,
-      experience: `${experience} years`,
-      speciality: special,
-      qualification: qualification,
-      image: data,
-      fees: fees,
-      available: [
+    try {
+      const formData = new FormData();
+      formData.append("file", image);
+      formData.append("upload_preset", "lef6u6wv");
+      const requestConfig = {
+        url: `https://api.cloudinary.com/v1_1/ddrleopwg/image/upload`,
+        method: "POST",
+        body: formData,
+      };
+      const data = await uploadImage(requestConfig, formData);
+      const doctor = {
+        hospital: id,
+        name: `Dr. ${fullNames}`,
+        phone: phone,
+        nmc: nmc,
+        experience: `${experience} years`,
+        speciality: special,
+        qualification: qualification,
+        image: data,
+        fees: fees,
+        available: [
+          {
+            id: 1,
+          },
+          {
+            id: 2,
+          },
+          {
+            id: 3,
+          },
+        ],
+      };
+      const response = await fetch(
+        "http://localhost:3000/api/manager/createDoctor/",
         {
-          id: 1,
-        },
-        {
-          id: 2,
-        },
-        {
-          id: 3,
-        },
-      ],
-    };
-    await fetch("http://localhost:3000/api/manager/createDoctor/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(doctor),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        onClose();
-        setDoctor((doctor) => !doctor);
-        toast({
-          title: "Doctor Added.",
-          description: "Doctor has been added successfully.",
-          status: "success",
-        });
-      })
-      .catch((err) => console.log(err));
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(doctor),
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData?.msg || "Failed to add doctor");
+      }
+
+      const result = await response.json();
+
+      onClose();
+      setDoctor((prev) => !prev);
+
+      toast({
+        title: "Doctor Added.",
+        description: "Doctor has been added successfully.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (err) {
+      console.error("Add Doctor Error:", err);
+      toast({
+        title: "Doctor addition failed.",
+        description: err?.message || "Something went wrong.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   const onSearchHandler = (text) => {
@@ -702,7 +722,13 @@ const TableDoctor = () => {
         justifyContent="center"
         direction={"column"}
       >
-        <Flex my={50} w={"full"} justifyContent={"space-between"} wrap={"wrap"} gap={5}>
+        <Flex
+          my={50}
+          w={"full"}
+          justifyContent={"space-between"}
+          wrap={"wrap"}
+          gap={5}
+        >
           <Flex gap={2}>
             <Flex w={"250px"}>
               <Select
