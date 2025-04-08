@@ -99,21 +99,25 @@ export default function UserProfileEdit(props) {
           address: userData.address,
         }),
       });
-      toast({
-        title: "Profile Updated.",
-        description: "Your profile has been updated.",
-        status: "success",
-        position: "top-right",
-        duration: 2000,
-      });
-      fetchUser(phone);
-
-      props.setUpdated((prev) => !prev);
+      if(res.status === 200){
+        toast({
+          title: "Profile Updated.",
+          description: "Your profile has been updated.",
+          status: "success",
+          position: "top-right",
+          duration: 2000,
+        });
+        fetchUser(phone);
+        props.setUpdated((prev) => !prev);
+      }else{
+        const errorData = await res.json();        
+        throw new Error(errorData?.message || "update failed");
+      }
     } catch (err) {
       console.log(err);
       toast({
         title: "Update Failed.",
-        description: "Update Failed",
+        description: err?.message || "failed to update",
         status: "error",
         duration: 2000,
       });
