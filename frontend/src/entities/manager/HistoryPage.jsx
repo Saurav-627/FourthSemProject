@@ -44,6 +44,7 @@ const HistoryPage = () => {
   useEffect(() => {
     getHistory();
   }, []);
+  
 
   const approveHistory = async (id) => {
     const data = { id: id, status: "Approved" };

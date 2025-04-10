@@ -31,6 +31,7 @@ const History = mongoose.Schema({
   },
   status: {
     type: String,
+    enum: ["Pending", "Approved", "Cancelled"],
     required: true,
   },
   hospital: {

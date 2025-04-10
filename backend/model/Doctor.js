@@ -1,3 +1,4 @@
+const { limit } = require("@hapi/joi/lib/common");
 const number = require("@hapi/joi/lib/types/number");
 const mongoose = require("mongoose");
 
@@ -58,6 +59,11 @@ const doctorSchema = new mongoose.Schema({
         type: String,
         default: "00:00-00:00",
       },
+      limit: {
+        type: number,
+        default: 0,
+      },
+      originalLimit: { type: Number, default: 0 },
     },
   ],
 });

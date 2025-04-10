@@ -6,6 +6,7 @@ const Otp = require("../model/Otp");
 const verifyOtp = require("../controllers/verifyOtp");
 const History = require("../model/History");
 const Doctor = require("../model/Doctor");
+const { ObjectId } = require("mongodb");
 
 router.post("/sendOTP", async (req, res) => {
   const { phone } = req.body;
@@ -105,63 +106,171 @@ router.get("/data/:phone", async (req, res) => {
   return res.status(200).json({ user: user });
 });
 
-router.post("/addHistory", async (req, res) => {
-  const { phone, doctor_id, price, token, doctor_name, alloted, hospital } =
-    req.body;
+// router.post("/addHistory", async (req, res) => {
+//   const { phone, doctor_id, price, token, doctor_name, alloted, hospital } =
+//     req.body;
 
-  console.log(req.body);
-  if (
-    !phone ||
-    !doctor_id ||
-    !price ||
-    !token ||
-    !doctor_name ||
-    !alloted ||
-    !hospital
-  ) {
-    return res.status(400).json({ message: "Please fill all the fields" });
-  }
+//   console.log(req.body);
+//   if (
+//     !phone ||
+//     !doctor_id ||
+//     !price ||
+//     !token ||
+//     !doctor_name ||
+//     !alloted ||
+//     !hospital
+//   ) {
+//     return res.status(400).json({ message: "Please fill all the fields" });
+//   }
 
-  const hist = await History.findOne({
-    doctor_id: doctor_id,
-    phone: phone,
-    status: "Pending",
-  });
+//   const existing = await History.findOne({ phone, doctor_id, alloted, status: { $ne: "Cancelled" } });
+//   if (existing) {
+//     return res.status(400).json({ message: "Appointment Already Booked" });
+//   }
 
-  if (hist)
-    return res.status(400).send({ message: "Appointment Already Booked" });
+//   try {
+//     const history = new History({
+//       phone: phone,
+//       doctor_id: doctor_id,
+//       price: price,
+//       token: token,
+//       alloted: alloted,
+//       doctor: doctor_name,
+//       hospital: hospital,
+//       status: "Pending",
+//     });
+//     await history.save();
+//     res.status(200).send({ message: "History Created" });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).send({ message: "Internal Server Error" });
+//   }
+// });
+
+// router.post("/checkStatus/:doctor_id", async (req, res) => {
+//   const { doctor_id } = req.params;
+//   const { time } = req.body; // Expect time in the body
+
+//   try {
+//     // Fetch doctor data
+//     const doctor = await Doctor.findOne({ _id: ObjectId(doctor_id) });
+//     if (!doctor) {
+//       return res.status(400).json({ message: "Doctor not found" });
+//     }
+
+//     // Find the specific slot
+//     const slot = doctor.available.find((s) => s.time === time);
+//     if (!slot) {
+//       return res.status(400).json({ message: "Slot not found" });
+//     }
+
+//     // Fetch history for this doctor and time slot
+//     const history = await History.find({
+//       doctor_id: doctor_id,
+//       alloted: time,
+//       status: { $in: ["Pending", "Approved"] } // Only count active bookings
+//     });
+
+//     const bookingCount = history.length;
+
+//     if (bookingCount >= slot.limit) {
+//       return res.status(400).json({
+//         message: "No seats left",
+//         limit: slot.limit,
+//         currentBookings: bookingCount
+//       });
+//     }
+
+//     return res.status(200).json({
+//       message: "Seats Available",
+//       limit: slot.limit,
+//       currentBookings: bookingCount
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// });
+
+router.post("/checkStatus/:doctor_id", async (req, res) => {
+  const { doctor_id } = req.params;
+  const { time } = req.body;
 
   try {
+    const doctor = await Doctor.findOne({ _id: ObjectId(doctor_id) });
+    if (!doctor) {
+      return res.status(400).json({ message: "Doctor not found" });
+    }
+
+    const slot = doctor.available.find((s) => s.time === time);
+    if (!slot) {
+      return res.status(400).json({ message: "Slot not found" });
+    }
+
+    if (slot.limit <= 0) {
+      return res.status(400).json({
+        message: "No seats left",
+        limit: slot.limit,
+        originalLimit: slot.originalLimit,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Seats Available",
+      limit: slot.limit,
+      originalLimit: slot.originalLimit,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.post("/addHistory", async (req, res) => {
+  const { phone, doctor_id, doctor_name, token, price, alloted, hospital } =
+    req.body;
+
+  try {
+    const doctor1 = await Doctor.findOne({ _id: ObjectId(doctor_id) });
+    const slot = doctor1.available.find((s) => s.time === alloted);
+    if (slot.limit <= 0) {
+      return res.status(400).json({ message: "No seats left" });
+    }
+    console.log(req.body);
+
+    const existing = await History.findOne({
+      phone,
+      doctor_id,
+      alloted,
+      status: { $ne: "Cancelled" },
+    });
+    if (existing) {
+      return res.status(400).json({ message: "Appointment Already Booked" });
+    }
+    console.log("saurav", doctor_name);
+    
+
     const history = new History({
       phone: phone,
       doctor_id: doctor_id,
+      doctor: doctor_name,
       price: price,
       token: token,
       alloted: alloted,
-      doctor: doctor_name,
       hospital: hospital,
       status: "Pending",
     });
     await history.save();
-    res.status(200).send({ message: "History Created" });
+
+    // Decrease the limit
+    slot.limit -= 1;
+    await doctor1.save();
+
+    res.status(200).json({ message: "History Created" });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
-});
-
-router.get("/checkStatus/:doctor_id", async (req, res) => {
-  const { id } = req.params;
-  console.log(id);
-  const history = await History.find({ doctor_id: id });
-  if (!history) {
-    return res.status(200).send({ message: "No History Found" });
-  }
-  const length = history.length;
-  if (length >= 20) {
-    return res.status(400).send({ message: "No seats left" });
-  }
-  return res.status(200).send({ message: "Seats Available" });
 });
 
 router.get("/getHistory/:phone", async (req, res) => {
@@ -174,23 +283,46 @@ router.get("/getHistory/:phone", async (req, res) => {
 });
 
 router.patch("/updateHistory", async (req, res) => {
-  const { phone, doctor_id, status } = req.body;
-  if (!phone || !doctor_id || !status) {
-    return res.status(400).json({ message: "Please fill all the fields" });
-  }
+  const { doctor_id, phone, status, alloted } = req.body;
+
   try {
     const history = await History.findOne({
-      phone: phone,
-      doctor_id: doctor_id,
-      status: "Pending",
+      doctor_id,
+      phone,
+      alloted,
+      status: { $ne: "Cancelled" },
     });
-    if (!history) return res.status(400).json({ message: "History Not Found" });
-    if (history.status === "Cancelled")
-      return res.status(400).send({ message: "Already Cancelled" });
-    history.status = status;
+    if (!history) {
+      return res
+        .status(400)
+        .json({ message: "History not found or already cancelled" });
+    }
 
+    history.status = status;
     await history.save();
+
+    // Increase limit if cancelled
+    if (status === "Cancelled") {
+      const doctor = await Doctor.findOne({ _id: ObjectId(doctor_id) });
+      const slot = doctor.available.find((s) => s.time === alloted);
+      if (slot.limit < slot.originalLimit) {
+        slot.limit += 1;
+        await doctor.save();
+      }
+    }
+
     res.status(200).json({ message: "History Updated" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.get("/getUserBookings/:phone", async (req, res) => {
+  const { phone } = req.params;
+  try {
+    const bookings = await History.find({ phone });
+    res.status(200).json({ message: "Bookings Fetched", bookings });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal Server Error" });

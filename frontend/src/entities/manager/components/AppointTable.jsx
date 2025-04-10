@@ -174,6 +174,8 @@ const AppointTable = () => {
         return { ...state, endTime: action.value };
       case "date":
         return { ...state, date: action.value };
+      case "limit":
+        return { ...state, limit: action.value };
       case "id":
         return { ...state, id: action.value, doctor: action.doctor };
       case "clear":
@@ -224,8 +226,11 @@ const AppointTable = () => {
       id: editData.id,
       time: editData.startTime + "-" + editData.endTime,
       date: editData.date,
+      limit: editData.limit,
       doctor: editData.doctor,
     };
+    console.log(data);
+
     onEditClose();
     try {
       const response = await fetch(
@@ -322,6 +327,18 @@ const AppointTable = () => {
                 />
               </FormControl>
             </HStack>
+            <FormControl mt={4}>
+              <FormLabel>Booking Limit</FormLabel>
+              <Input
+                type={"number"}
+                min={1}
+                onChange={(e) =>
+                  setEditData({ type: "limit", value: e.target.value })
+                }
+                value={editData.limit}
+                placeholder="Enter max bookings (default: 1)"
+              />
+            </FormControl>
           </ModalBody>
 
           <ModalFooter>
@@ -461,6 +478,7 @@ const AppointTable = () => {
                       >
                         <Badge>{token.available[0].time}</Badge>
                         <Badge>{token.available[0].date}</Badge>
+                        <Badge>{token.available[0]?.limit}</Badge>
                         <IconButton
                           colorScheme="green"
                           icon={<AiFillEdit />}
@@ -485,6 +503,7 @@ const AppointTable = () => {
                       >
                         <Badge>{token.available[1].time}</Badge>
                         <Badge>{token.available[1].date}</Badge>
+                        <Badge>{token.available[1]?.limit}</Badge>
                         <IconButton
                           colorScheme="green"
                           icon={<AiFillEdit />}
@@ -508,6 +527,7 @@ const AppointTable = () => {
                       >
                         <Badge>{token.available[2].time}</Badge>
                         <Badge>{token.available[2].date}</Badge>
+                        <Badge>{token.available[2]?.limit}</Badge>
                         <IconButton
                           colorScheme="green"
                           icon={<AiFillEdit />}

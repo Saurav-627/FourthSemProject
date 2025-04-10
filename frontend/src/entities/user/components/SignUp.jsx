@@ -230,11 +230,6 @@ export default function SignUp() {
       newErrors.city = "City must be 2-50 letters only";
     }
 
-    if (!formData.age) {
-      newErrors.age = "Age is required";
-    } else if (isNaN(formData.age) || formData.age < 18 || formData.age > 120) {
-      newErrors.age = "Age must be a number between 18 and 120";
-    }
 
     // Stricter email validation
     if (
@@ -372,7 +367,7 @@ export default function SignUp() {
                     </FormControl>
                   </Box>
                   <Box>
-                    <FormControl isInvalid={!!errors.age} isRequired>
+                    <FormControl isRequired>
                       <FormLabel>Age</FormLabel>
                       <Input
                         type="number"
@@ -380,7 +375,6 @@ export default function SignUp() {
                         value={formData.age}
                         onChange={handleChange}
                       />
-                      <FormErrorMessage>{errors.age}</FormErrorMessage>
                     </FormControl>
                   </Box>
                 </HStack>

@@ -231,7 +231,7 @@ router.patch("/updateDoctor/:id", async (req, res) => {
 });
 
 router.post("/editSchedule", async (req, res) => {
-  const { doctor, date, time, id } = req.body;
+  const { doctor, date, time, id, limit } = req.body;
   console.log(req.body);
   try {
     const doctor1 = await Doctor.findOne({ _id: ObjectId(doctor) });
@@ -242,6 +242,8 @@ router.post("/editSchedule", async (req, res) => {
     const index = available.findIndex((item) => item.id === id);
     available[index].date = date;
     available[index].time = time;
+    available[index].originalLimit = limit || 1;
+    available[index].limit = limit || 1;
     await doctor1.save();
     res.status(200).json({ message: "Schedule Updated" });
   } catch (error) {
