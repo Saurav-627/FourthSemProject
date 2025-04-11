@@ -8,30 +8,74 @@ const History = require("../model/History");
 const Doctor = require("../model/Doctor");
 const { ObjectId } = require("mongodb");
 
+// router.post("/sendOTP", async (req, res) => {
+//   const { phone } = req.body;
+//   const otp = Math.floor(1000 + Math.random() * 9000);
+//   const message = `Your OTP is ${otp}`;
+//   const url = `https://sms.aakashsms.com/sms/v3/send`;
+//   const body = {
+//     auth_token: process.env.SMS,
+//     to: phone,
+//     text: message,
+//   };
+//   try {
+//     // const response = await axios.post(url, body);
+//     // const data = await response.data;
+//     // console.log(data);
+//     const newOtp = new Otp({
+//       phone: phone,
+//       otp: otp,
+//       expireAt: Date.now() + 300000,
+//     });
+//     await newOtp.save();
+//     res.status(200).json({ otp: otp });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// });
+
 router.post("/sendOTP", async (req, res) => {
   const { phone } = req.body;
-  const otp = Math.floor(1000 + Math.random() * 9000);
-  const message = `Your OTP is ${otp}`;
-  const url = `https://sms.aakashsms.com/sms/v3/send`;
-  const body = {
-    auth_token: process.env.SMS,
-    to: phone,
-    text: message,
-  };
+  if (!phone) {
+    return res.status(400).json({ message: "Phone number is required" });
+  }
+
   try {
-    // const response = await axios.post(url, body);
-    // const data = await response.data;
-    // console.log(data);
+    // Check if user exists
+    const user = await User.findOne({ phone });
+    if (user) {
+      // User is registered, allow direct login
+      return res.status(200).json({ message: "USER_EXISTS", user });
+    }
+
+    // User is not registered, send OTP
+    const otp = Math.floor(1000 + Math.random() * 9000);
+    const message = `Your OTP is ${otp}`;
+    const url = `https://sms.aakashsms.com/sms/v3/send`;
+    const body = {
+      auth_token: process.env.SMS,
+      to: phone,
+      text: message,
+    };
+
+    // Uncomment when SMS service is active
+    /*
+    const response = await axios.post(url, body);
+    const data = await response.data;
+    console.log(data);
+    */
+
     const newOtp = new Otp({
-      phone: phone,
-      otp: otp,
-      expireAt: Date.now() + 300000,
+      phone,
+      otp,
+      expireAt: Date.now() + 300000, // 5 minutes
     });
     await newOtp.save();
-    res.status(200).json({ otp: otp });
+    return res.status(200).json({ message: "OTP_SENT", otp }); // Return OTP for testing
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
@@ -77,23 +121,47 @@ router.patch("/updateData", async (req, res) => {
   }
 });
 
+// router.post("/login", async (req, res) => {
+//   const { phone, otp } = req.body;
+//   if (!phone || !otp) {
+//     return res.status(400).json({ message: "Please fill all the fields" });
+//   }
+
+//   const isOtpValid = await verifyOtp(otp, phone);
+//   console.log(isOtpValid);
+//   if (!isOtpValid) {
+//     return res.status(400).json({ message: "Invalid OTP" });
+//   }
+//   const user = await User.findOne({ phone: phone });
+
+//   if (!user) {
+//     return res.json({ message: "CREATE" });
+//   }
+//   return res.json({ message: "SUCCESS", user: user });
+// });
+
 router.post("/login", async (req, res) => {
   const { phone, otp } = req.body;
   if (!phone || !otp) {
     return res.status(400).json({ message: "Please fill all the fields" });
   }
 
-  const isOtpValid = await verifyOtp(otp, phone);
-  console.log(isOtpValid);
-  if (!isOtpValid) {
-    return res.status(400).json({ message: "Invalid OTP" });
-  }
-  const user = await User.findOne({ phone: phone });
+  try {
+    const isOtpValid = await verifyOtp(otp, phone);
+    if (!isOtpValid) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
 
-  if (!user) {
-    return res.json({ message: "CREATE" });
+    const user = await User.findOne({ phone });
+    if (!user) {
+      return res.status(200).json({ message: "CREATE" }); // New user, proceed to signup
+    }
+
+    return res.status(200).json({ message: "SUCCESS", user });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
-  return res.json({ message: "SUCCESS", user: user });
 });
 
 router.get("/data/:phone", async (req, res) => {
