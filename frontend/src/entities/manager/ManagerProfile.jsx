@@ -60,7 +60,7 @@ const ManagerProfile = (props) => {
         `http://localhost:3000/api/manager/updateManagerData`,
         {
           method: "PATCH",
-          body: JSON.stringify({}),
+          // body: JSON.stringify({}),
           headers: {
             "Content-Type": "application/json",
           },

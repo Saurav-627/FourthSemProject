@@ -222,11 +222,12 @@ const AppointTable = () => {
   }, []);
 
   const saveSchedule = async () => {
+    const validatedLimit = Math.min(Number(editData.limit) || 1, 30);
     const data = {
       id: editData.id,
       time: editData.startTime + "-" + editData.endTime,
       date: editData.date,
-      limit: editData.limit,
+      limit: validatedLimit,
       doctor: editData.doctor,
     };
     console.log(data);
@@ -332,11 +333,13 @@ const AppointTable = () => {
               <Input
                 type={"number"}
                 min={1}
-                onChange={(e) =>
-                  setEditData({ type: "limit", value: e.target.value })
-                }
+                max={30}
+                onChange={(e) => {
+                  const value = Math.min(Number(e.target.value), 30); // Cap input at 30
+                  setEditData({ type: "limit", value: value.toString() });
+                }}
                 value={editData.limit}
-                placeholder="Enter max bookings (default: 1)"
+                placeholder="Enter max bookings (1-30)"
               />
             </FormControl>
           </ModalBody>

@@ -58,10 +58,12 @@ const doctorSchema = new mongoose.Schema({
       time: {
         type: String,
         default: "00:00-00:00",
+
       },
       limit: {
         type: number,
         default: 0,
+        max: 5,
       },
       originalLimit: { type: Number, default: 0 },
     },
