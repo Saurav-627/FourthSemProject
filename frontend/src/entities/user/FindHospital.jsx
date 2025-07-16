@@ -50,7 +50,7 @@ const FindHostpital = () => {
   const [search, setSearch] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/manager/getHospitals")
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/manager/getHospitals`)
       .then((res) => res.json())
       .then((data) => {
         setData(data.hospitals);

@@ -53,7 +53,7 @@ export default function Sidebar(props) {
   const fetchManagerData = async () => {
     const manager = localStorage.getItem("manager");
     const data = await fetch(
-      `http://localhost:3000/api/manager/getManagerData/${manager}`
+      `${import.meta.env.VITE_API_BASE_URL}/manager/getManagerData/${manager}`
     );
     const response = await data.json();
     setManagerData(response.hospital);

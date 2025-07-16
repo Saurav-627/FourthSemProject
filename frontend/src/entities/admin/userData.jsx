@@ -28,7 +28,7 @@ const UserData = () => {
 
   const fetchAllSpeciality = async () => {
     try {
-      const data = await fetch("http://localhost:3000/api/admin/getUserInfo");
+      const data = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/getUserInfo`);
       const response = await data.json();
       console.log(response.data);
       setSpecialityData(response.data);

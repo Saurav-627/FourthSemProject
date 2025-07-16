@@ -15,7 +15,7 @@ const Speciality = () => {
   useEffect(() => {
     const getSpeciality = async () => {
       const response = await fetch(
-        `http://localhost:3000/api/manager/getSpeciality/${id}`
+        `${import.meta.env.VITE_API_BASE_URL}/manager/getSpeciality/${id}`
       )
         .then((res) => res.json())
         .then((data) => {

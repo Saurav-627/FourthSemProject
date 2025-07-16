@@ -30,7 +30,7 @@ const HistoryPage = () => {
   const [temp, setTemp] = useState([]);
   const toast = useToast();
   const getHistory = async () => {
-    await fetch(`http://localhost:3000/api/manager/getHistoryData/${id}`)
+    await fetch(`${import.meta.env.VITE_API_BASE_URL}/manager/getHistoryData/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setHistory(data.history);
@@ -48,7 +48,7 @@ const HistoryPage = () => {
 
   const approveHistory = async (id) => {
     const data = { id: id, status: "Approved" };
-    await fetch("http://localhost:3000/api/manager/updateHistoryData", {
+    await fetch(`${import.meta.env.VITE_API_BASE_URL}/manager/updateHistoryData`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

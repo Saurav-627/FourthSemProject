@@ -39,7 +39,7 @@ export default function AdminLogin() {
     e.preventDefault();
     try {
       const response = await fetch(
-        "http://localhost:3000/api/admin/loginAdmin",
+        `${import.meta.env.VITE_API_BASE_URL}/admin/loginAdmin`,
         {
           method: "POST",
           headers: {

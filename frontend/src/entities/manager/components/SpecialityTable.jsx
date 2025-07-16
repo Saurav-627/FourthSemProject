@@ -61,7 +61,7 @@ const SpecailityTable = () => {
   useEffect(() => {
     const getSpecialityData = async () => {
       await fetch(
-        `http://localhost:3000/api/manager/getHospitalSpeciality/${id}`
+        `${import.meta.env.VITE_API_BASE_URL}/manager/getHospitalSpeciality/${id}`
       )
         .then((res) => res.json())
         .then((data) => {
@@ -81,7 +81,7 @@ const SpecailityTable = () => {
       description: specialityDescription,
     };
     console.log(data);
-    await fetch("http://localhost:3000/api/manager/addHospitalSpeciality", {
+    await fetch(`${import.meta.env.VITE_API_BASE_URL}/manager/addHospitalSpeciality`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -102,7 +102,7 @@ const SpecailityTable = () => {
   const deleteHospitalSpeciality = async (id) => {
     const manager = localStorage.getItem("manager");
     await fetch(
-      `http://localhost:3000/api/manager/deleteHospitalSpeciality/${id}`,
+      `${import.meta.env.VITE_API_BASE_URL}/manager/deleteHospitalSpeciality/${id}`,
       {
         method: "DELETE",
         headers: {
@@ -144,7 +144,7 @@ const SpecailityTable = () => {
     };
     try {
       const res = await fetch(
-        `http://localhost:3000/api/manager/updateHospitalSpeciality`,
+        `${import.meta.env.VITE_API_BASE_URL}/manager/updateHospitalSpeciality`,
         {
           method: "PATCH",
           headers: {

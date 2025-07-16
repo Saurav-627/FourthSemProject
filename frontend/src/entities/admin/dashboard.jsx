@@ -5,7 +5,7 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState([]);
   const fetchAllStats = async () => {
     try {
-      const data = await fetch("http://localhost:3000/api/admin/allStats");
+      const data = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/allStats`);
       const response = await data.json();
       console.log(response.data.forumsData);
       setStats(response.data);

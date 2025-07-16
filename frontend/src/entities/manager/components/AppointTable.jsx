@@ -195,7 +195,7 @@ const AppointTable = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await fetch(`http://localhost:3000/api/manager/getDoctors/${id}`)
+      await fetch(`${import.meta.env.VITE_API_BASE_URL}/manager/getDoctors/${id}`)
         .then((res) => res.json())
         .then((res) => {
           setSpecialityData(res.doctors);
@@ -208,7 +208,7 @@ const AppointTable = () => {
   useEffect(() => {
     const getSpecialityData = async () => {
       await fetch(
-        `http://localhost:3000/api/manager/getHospitalSpeciality/${id}`
+        `${import.meta.env.VITE_API_BASE_URL}/manager/getHospitalSpeciality/${id}`
       )
         .then((res) => res.json())
         .then((data) => {
@@ -235,7 +235,7 @@ const AppointTable = () => {
     onEditClose();
     try {
       const response = await fetch(
-        "http://localhost:3000/api/manager/editSchedule",
+        `${import.meta.env.VITE_API_BASE_URL}/manager/editSchedule`,
         {
           method: "POST",
           headers: {

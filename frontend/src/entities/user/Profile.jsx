@@ -36,7 +36,7 @@ export default function UserProfileEdit(props) {
   const fetchUser = async (phoneNumber) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/user/data/${phoneNumber}`
+        `${import.meta.env.VITE_API_BASE_URL}/user/data/${phoneNumber}`
       );
       const data = await response.json();
       console.log("this is user", data);
@@ -50,7 +50,7 @@ export default function UserProfileEdit(props) {
   const fetchHistory = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/user/getHistory/${phone}`
+        `${import.meta.env.VITE_API_BASE_URL}/user/getHistory/${phone}`
       );
       const data = await response.json();
       console.log("doshod",data);
@@ -85,7 +85,7 @@ export default function UserProfileEdit(props) {
     try {
       data = await uploadImage(requestConfig);
       console.log(data);
-      const res = await fetch(`http://localhost:3000/api/user/updateData`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/updateData`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -127,7 +127,7 @@ export default function UserProfileEdit(props) {
   const downloadReport = async (appointmentId) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/user/appointment-report/${appointmentId}`,
+        `${import.meta.env.VITE_API_BASE_URL}/user/appointment-report/${appointmentId}`,
         {
           responseType: "blob",
         }

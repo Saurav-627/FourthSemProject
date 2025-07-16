@@ -47,7 +47,7 @@ export default function Navbar(props) {
   const fetchUser = async (phoneNumber) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/user/data/${phoneNumber}`
+        `${import.meta.env.VITE_API_BASE_URL}/user/data/${phoneNumber}`
       );
       const data = await response.json();
       setUserData(data.user);

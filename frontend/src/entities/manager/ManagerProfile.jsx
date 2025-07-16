@@ -26,7 +26,7 @@ const ManagerProfile = (props) => {
 
   const fetchManagerData = async () => {
     const data = await fetch(
-      `http://localhost:3000/api/manager/getManagerData/${manager}`
+      `${import.meta.env.VITE_API_BASE_URL}/manager/getManagerData/${manager}`
     );
     const response = await data.json();
     setManagerData(response.hospital);
@@ -57,7 +57,7 @@ const ManagerProfile = (props) => {
     console.log(newData);
     try {
       const data = await fetch(
-        `http://localhost:3000/api/manager/updateManagerData`,
+        `${import.meta.env.VITE_API_BASE_URL}/manager/updateManagerData`,
         {
           method: "PATCH",
           // body: JSON.stringify({}),

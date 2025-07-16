@@ -43,7 +43,7 @@ export default function ManagerLogin() {
     const login = async (e) => {
       try {
         const response = await fetch(
-          "http://localhost:3000/api/manager/login",
+          `${import.meta.env.VITE_API_BASE_URL}/manager/login`,
           {
             method: "POST",
             headers: {
