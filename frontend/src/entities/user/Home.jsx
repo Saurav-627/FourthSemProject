@@ -74,6 +74,20 @@ const Home = () => {
               Book An Appointment
             </Button>
           </Stack>
+          <Text fontSize={"14px"}>
+            Only for Test Mode. Contact:{" "}
+            <a
+              href="mailto:luitelsaurav627@gmail.com"
+              style={{ color: "#3182ce", textDecoration: "underline" }}
+            >
+              luitelsaurav627@gmail.com
+            </a>{" "}
+            for admin and manager email password.
+          </Text>
+          <Stack direction={{ base: "column", md: "row" }} spacing={4}>
+            <Button onClick={() => navigate("/admin")}>Go to admin</Button>
+            <Button onClick={() => navigate("/manager")}>Go to manager</Button>
+          </Stack>
         </Stack>
       </Flex>
       <Flex
