@@ -211,6 +211,10 @@ app.use("/api/user", authRoute);
 app.use("/api/manager", managerRoute);
 app.use("/api/admin", adminRoute);
 
+app.get("/api/ping", (req, res) => {
+  res.status(200).send("OK");
+});
+
 app.get("/api", (req, res) => {
   res.json({
     message: "Server Working",
